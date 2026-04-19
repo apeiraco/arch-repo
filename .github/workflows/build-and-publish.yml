@@ -1,0 +1,85 @@
+name: Build and Publish Packages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/PKGBUILD'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm git base-devel sudo
+          
+          # Create a non-root user for makepkg
+          useradd -m builder
+          echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+          
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fix workspace permissions
+        run: |
+          chown -R builder:builder $GITHUB_WORKSPACE
+
+      - name: Build packages
+        run: |
+          su builder -c '
+            mkdir -p $GITHUB_WORKSPACE/repo/x86_64
+            mkdir -p $GITHUB_WORKSPACE/repo/aarch64
+            
+            for d in */ ; do
+              if [ -d "$d" ] && [ -f "$d/PKGBUILD" ]; then
+                cd "$d"
+                
+                # Build x86_64
+                makepkg -s --noconfirm -cf
+                cp *.pkg.tar.zst $GITHUB_WORKSPACE/repo/x86_64/
+                
+                # Build aarch64
+                sudo sed -i "s/CARCH=\"x86_64\"/CARCH=\"aarch64\"/g" /etc/makepkg.conf
+                makepkg -s --ignorearch --noconfirm -cf
+                cp *aarch64.pkg.tar.zst $GITHUB_WORKSPACE/repo/aarch64/ || true
+                sudo sed -i "s/CARCH=\"aarch64\"/CARCH=\"x86_64\"/g" /etc/makepkg.conf
+                
+                cd ..
+              fi
+            done
+            
+            cd $GITHUB_WORKSPACE/repo/x86_64
+            repo-add apeiraco.db.tar.gz *.pkg.tar.zst
+            
+            cd $GITHUB_WORKSPACE/repo/aarch64
+            if ls *.pkg.tar.zst 1> /dev/null 2>&1; then
+              repo-add apeiraco.db.tar.gz *.pkg.tar.zst
+            fi
+          '
+          
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: repo
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,58 @@
+name: Auto Update Packages
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm git base-devel nvchecker pacman-contrib jq
+          
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Run nvchecker
+        run: |
+          nvchecker -c .nvchecker.toml
+
+      - name: Update PKGBUILDs
+        run: |
+          CHANGED=0
+          if [ -f .nvchecker.toml ] && [ -f new_ver.json ]; then
+            for pkg in $(jq -r 'keys[]' new_ver.json); do
+              NEW_VER=$(jq -r ".\"$pkg\"" new_ver.json)
+              if [ -d "$pkg" ] && [ -f "$pkg/PKGBUILD" ]; then
+                OLD_VER=$(grep "^pkgver=" "$pkg/PKGBUILD" | cut -d= -f2)
+                if [ "$NEW_VER" != "$OLD_VER" ]; then
+                  echo "Updating $pkg from $OLD_VER to $NEW_VER"
+                  sed -i "s/^pkgver=.*/pkgver=$NEW_VER/" "$pkg/PKGBUILD"
+                  sed -i "s/^pkgrel=.*/pkgrel=1/" "$pkg/PKGBUILD"
+                  cd "$pkg"
+                  updpkgsums
+                  cd ..
+                  git add "$pkg/PKGBUILD"
+                  git commit -m "chore: bump $pkg to $NEW_VER"
+                  CHANGED=1
+                fi
+              fi
+            done
+          fi
+          if [ "$CHANGED" -eq 1 ]; then
+            git push
+          else
+            echo "No updates found."
+          fi

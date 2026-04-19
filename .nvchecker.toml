@@ -1,0 +1,5 @@
+[openvscode-server-bin]
+source = "github"
+github = "gitpod-io/openvscode-server"
+prefix = "openvscode-server-v"
+use_latest_release = true

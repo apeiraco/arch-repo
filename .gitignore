@@ -12,3 +12,22 @@
 
 pkg/
 src/
+
+# Arch Linux makepkg artifacts
+*.pkg.tar.zst
+*.pkg.tar.xz
+*.pkg.tar.zst.sig
+*.pkg.tar.xz.sig
+*/src/
+*/pkg/
+
+# nvchecker state files
+new_ver.json
+old_ver.json
+.nvchecker.sqlite
+
+# GitHub Actions local output
+repo/
+
+# IDE & Editor & Diagnostics
+.idea/

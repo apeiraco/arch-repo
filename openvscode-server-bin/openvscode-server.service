@@ -1,0 +1,13 @@
+[Unit]
+Description=OpenVSCode Server
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=/opt/openvscode-server/openvscode-server.conf
+ExecStart=/usr/bin/openvscode-server $OPENVSCODE_ARGS
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target

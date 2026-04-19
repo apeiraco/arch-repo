@@ -1,0 +1,44 @@
+# Maintainer: AI Agent
+pkgname=openvscode-server-bin
+pkgver=1.109.5
+pkgrel=1
+pkgdesc="Run upstream VS Code on a remote machine with access through a modern web browser"
+arch=('x86_64' 'aarch64')
+url="https://github.com/gitpod-io/openvscode-server"
+license=('MIT')
+depends=('glibc')
+provides=('openvscode-server')
+conflicts=('openvscode-server')
+backup=("opt/${pkgname%-bin}/openvscode-server.conf")
+source=("openvscode-server.service"
+        "openvscode-server.conf")
+source_x86_64=("${pkgname}-${pkgver}-x86_64.tar.gz::https://github.com/gitpod-io/openvscode-server/releases/download/openvscode-server-v${pkgver}/openvscode-server-v${pkgver}-linux-x64.tar.gz")
+source_aarch64=("${pkgname}-${pkgver}-aarch64.tar.gz::https://github.com/gitpod-io/openvscode-server/releases/download/openvscode-server-v${pkgver}/openvscode-server-v${pkgver}-linux-arm64.tar.gz")
+sha256sums=('SKIP'
+            'SKIP')
+sha256sums_x86_64=('SKIP')
+sha256sums_aarch64=('SKIP')
+
+package() {
+    install -dm755 "${pkgdir}/opt/${pkgname%-bin}"
+    install -dm755 "${pkgdir}/usr/bin"
+
+    if [ "$CARCH" = "x86_64" ]; then
+        cp -r "${srcdir}/openvscode-server-v${pkgver}-linux-x64/"* "${pkgdir}/opt/${pkgname%-bin}/"
+    elif [ "$CARCH" = "aarch64" ]; then
+        cp -r "${srcdir}/openvscode-server-v${pkgver}-linux-arm64/"* "${pkgdir}/opt/${pkgname%-bin}/"
+    fi
+
+    # Fix permissions
+    chmod -R u=rwX,go=rX "${pkgdir}/opt/${pkgname%-bin}"
+    chmod +x "${pkgdir}/opt/${pkgname%-bin}/bin/openvscode-server"
+
+    # Link binary
+    ln -s "/opt/${pkgname%-bin}/bin/openvscode-server" "${pkgdir}/usr/bin/openvscode-server"
+
+    # Install systemd service
+    install -Dm644 "${srcdir}/openvscode-server.service" "${pkgdir}/usr/lib/systemd/user/openvscode-server.service"
+
+    # Install default config
+    install -Dm644 "${srcdir}/openvscode-server.conf" "${pkgdir}/opt/${pkgname%-bin}/openvscode-server.conf"
+}
