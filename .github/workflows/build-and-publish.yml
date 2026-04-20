@@ -6,6 +6,10 @@ on:
       - main
     paths:
       - '**/PKGBUILD'
+      - 'docs/**'
+      - 'justfile'
+      - 'mise.toml'
+      - '.github/workflows/**'
   workflow_dispatch:
 
 permissions:
