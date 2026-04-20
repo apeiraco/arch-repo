@@ -4,13 +4,17 @@
 
 This repository serves as a custom Pacman repository, focusing on automatically maintaining software that is not readily available or frequently updated in the AUR, such as pre-compiled developer tools and binaries.
 
-[![Auto Update Packages](https://github.com/apeiraco/arch-repo/actions/workflows/update.yml/badge.svg)](https://github.com/apeiraco/arch-repo/actions/workflows/update.yml)
-[![Build and Publish Packages](https://github.com/apeiraco/arch-repo/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/apeiraco/arch-repo/actions/workflows/build-and-publish.yml)
-[![License](https://img.shields.io/badge/license-Unlicense-blue)](LICENSE)
+<p class="badges">
+  <a href="https://github.com/apeiraco/arch-repo/actions/workflows/update.yml"><img src="https://github.com/apeiraco/arch-repo/actions/workflows/update.yml/badge.svg" alt="Auto Update Packages"></a>
+  <a href="https://github.com/apeiraco/arch-repo/actions/workflows/build-and-publish.yml"><img src="https://github.com/apeiraco/arch-repo/actions/workflows/build-and-publish.yml/badge.svg" alt="Build and Publish Packages"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Unlicense-blue" alt="License"></a>
+</p>
+
+<div class="github-only">
 
 **[🇨🇳 简体中文](README_CN.md)**
 
----
+</div>
 
 ## 📦 Package Directory
 
@@ -19,8 +23,6 @@ This repository serves as a custom Pacman repository, focusing on automatically 
 | Package | Description |
 | --- | --- |
 | **[openvscode-server-bin](https://github.com/gitpod-io/openvscode-server)** | Run upstream VS Code on a remote machine with access through a modern web browser. |
-
----
 
 ## 🚀 Quick Start
 
@@ -44,8 +46,6 @@ sudo pacman -Sy
 sudo pacman -S openvscode-server-bin
 ```
 
----
-
 ## 🤝 Contribution Guidelines
 
 This repository relies on GitHub Actions, `nvchecker`, and `updpkgsums` to minimize manual intervention. If you want to contribute or add new packages:
@@ -56,8 +56,6 @@ This repository relies on GitHub Actions, `nvchecker`, and `updpkgsums` to minim
 4. **User Services**: Prefer `systemd` user services (`/usr/lib/systemd/user/*.service`) for background development tools instead of system-wide services.
 
 For detailed Agent or contributor instructions, please read [AGENTS.md](AGENTS.md).
-
----
 
 ## 📄 License
 

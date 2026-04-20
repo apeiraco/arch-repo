@@ -4,13 +4,17 @@
 
 本仓库作为一个自定义的 Pacman 软件源运行，专注于自动化维护 AUR 中收录不及时或不便维护的预编译二进制软件与开发者工具。
 
-[![Auto Update Packages](https://github.com/apeiraco/arch-repo/actions/workflows/update.yml/badge.svg)](https://github.com/apeiraco/arch-repo/actions/workflows/update.yml)
-[![Build and Publish Packages](https://github.com/apeiraco/arch-repo/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/apeiraco/arch-repo/actions/workflows/build-and-publish.yml)
-[![License](https://img.shields.io/badge/license-Unlicense-blue)](LICENSE)
+<p class="badges">
+  <a href="https://github.com/apeiraco/arch-repo/actions/workflows/update.yml"><img src="https://github.com/apeiraco/arch-repo/actions/workflows/update.yml/badge.svg" alt="Auto Update Packages"></a>
+  <a href="https://github.com/apeiraco/arch-repo/actions/workflows/build-and-publish.yml"><img src="https://github.com/apeiraco/arch-repo/actions/workflows/build-and-publish.yml/badge.svg" alt="Build and Publish Packages"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Unlicense-blue" alt="License"></a>
+</p>
+
+<div class="github-only">
 
 **[🇬🇧 English](README.md)**
 
----
+</div>
 
 ## 📦 软件目录
 
@@ -19,8 +23,6 @@
 | 软件 | 描述 |
 | --- | --- |
 | **[openvscode-server-bin](https://github.com/gitpod-io/openvscode-server)** | 在远程服务器上运行上游原生的 VS Code，并通过现代浏览器进行访问。 |
-
----
 
 ## 🚀 快速开始
 
@@ -44,8 +46,6 @@ sudo pacman -Sy
 sudo pacman -S openvscode-server-bin
 ```
 
----
-
 ## 🤝 参与贡献
 
 本仓库高度依赖 GitHub Actions、`nvchecker` 与 `updpkgsums` 实现无人工干预的自动更新。如果你想添加新软件：
@@ -56,8 +56,6 @@ sudo pacman -S openvscode-server-bin
 4. **用户级服务**：对于开发环境的后台程序，强烈推荐提供 Systemd 用户级服务（`/usr/lib/systemd/user/*.service`），避免滥用系统全局级服务。
 
 详细的 Agent 指令与贡献规范，请参阅 [AGENTS.md](AGENTS.md)。
-
----
 
 ## 📄 许可证
 

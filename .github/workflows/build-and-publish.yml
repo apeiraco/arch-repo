@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           pacman -Syu --noconfirm
-          pacman -S --noconfirm git base-devel sudo
+          pacman -S --noconfirm git base-devel sudo mise just
           
           # Create a non-root user for makepkg
           useradd -m builder
@@ -66,6 +66,13 @@ jobs:
             if ls *.pkg.tar.zst 1> /dev/null 2>&1; then
               repo-add apeiraco.db.tar.gz *.pkg.tar.zst
             fi
+            
+            # Build VitePress Docs
+            cd $GITHUB_WORKSPACE
+            mise exec -- just setup
+            cd docs
+            mise exec -- pnpm run build
+            cp -r .vitepress/dist/* $GITHUB_WORKSPACE/repo/
           '
           
       - name: Upload artifact

@@ -31,3 +31,8 @@ repo/
 
 # IDE & Editor & Diagnostics
 .idea/
+
+# VitePress
+docs/node_modules/
+docs/.vitepress/dist/
+docs/.vitepress/cache/
